@@ -1,16 +1,13 @@
 package terraform.analysis
 
 __rego_metadoc__ := {
-  "title": "Require environment=test Tag",
-  "description": "Ensures all resources in the Terraform plan have a tag 'environment' set to 'test'."
+  "title": "Require Environment=test Tag",
+  "description": "This policy ensures all resources have an 'Environment' tag set to 'test'."
 }
 
 violation[{"msg": msg}] {
   resource := input.planned_values.root_module.resources[_]
-  not has_required_tag(resource.values.tags)
-  msg := sprintf("Resource %v is missing required tag environment=test", [resource.address])
-}
-
-has_required_tag(tags) {
-  tags.environment == "test"
+  tag := resource.values.tags.Environment
+  tag != "test"
+  msg := sprintf("Resource %v does not have Environment tag set to 'test'.", [resource.address])
 }
